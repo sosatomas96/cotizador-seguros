@@ -2,10 +2,10 @@ import React from 'react'
 import styled from '@emotion/styled';
 
 const ContenedorHeader = styled.header`
-    background-color: #26C6DA;
+    background-color: #b4aee8;
     padding: 10px;
     font-weight: bold;
-    color: #FFFFFF;
+    color: #FFFFFF; 
 `;
 
 const TextoHeader = styled.h1`
