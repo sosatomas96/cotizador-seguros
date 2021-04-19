@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import styled from '@emotion/styled';
+import {obtenerDiferenciaYear, calcularMarca, obtenerPlan} from '../Helper';
 
 const Campo = styled.div`
     display: flex;
@@ -39,11 +40,20 @@ const Boton = styled.button`
     }
 `
 
-const Formulario = () => {
+const Error = styled.div`
+    background-color: red;
+    color: white;
+    padding: 1rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    text-align: center;
+`
+
+const Formulario = ({guardarResumen}) => {
     const [datos, guardarDatos] = useState({
         marca:'',
         year:'',
-        plan:'',
+        plan:''
     });
 
     const [error, guardarError] = useState(false);
@@ -62,7 +72,7 @@ const Formulario = () => {
 
     //cuando el usuario envie el formulario
     const cotizarSeguro = e => {
-        e.prevent.default();
+        e.preventDefault();
 
         if(marca.trim() === '' || year.trim() === '' || plan.trim() === '') {
             guardarError(true);
@@ -70,12 +80,44 @@ const Formulario = () => {
         }
 
         guardarError(false);
+
+        //Una base de 2000
+        let resultado = 2000;
+
+        //obtener la diferencia de años
+        const diferencia = obtenerDiferenciaYear(year);
+        
+
+        //por cada año hay que restar el 3%
+        resultado -= ((diferencia * 3) * resultado) / 100;
+        
+        // Americano 15%
+        // Asiatico 5%
+        // Europeo 30%
+        resultado = calcularMarca(marca) * resultado;
+        
+
+        //Basico aumenta 20%
+        const incrementoPlan = obtenerPlan(plan);
+        resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
+
+        console.log(resultado);
+
+        //Total
+        guardarResumen({
+            cotizacion: resultado,
+            datos,
+        });
+
     }
 
     return ( 
         <form
             onSubmit={cotizarSeguro}
         >
+
+            {error ? <Error>Todos los campos son obligatorios</Error> : null}
+
             <Campo>
                 <Label>Marca</Label>
                     <Select
